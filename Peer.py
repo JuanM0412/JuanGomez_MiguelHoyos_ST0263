@@ -89,6 +89,7 @@ class Peer(p2p_pb2_grpc.P2PServiceServicer):
         except grpc.RpcError as e:
             print(f'Failed to join network: {e}')
 
+
     # Actualizar la Finger Table de los nodos que siguen en red, al entrar y al salir el nodo
     def leaveNetwork(self):
         with grpc.insecure_channel(f'{self.succ[0]}:{self.succ[1]}') as channel:

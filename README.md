@@ -1,4 +1,8 @@
+<div align="center">
+
 # Arquitectura P2P y Comunicación entre procesos mediante API REST, RPC y MOM
+
+</div>
 
 ### ST0263-242 Tópicos Especiales en Telemática
 

@@ -1,50 +1,38 @@
-# info de la materia: STxxxx <nombre>
-#
-# Estudiante(s): nombre, email-eafit
-#
-# Profesor: nombre, email-eafit
-#
-# <para borrar: EL OBJETIVO DE ESTA DOCUMENTACÍON ES QUE CUALQUIER LECTOR CON EL REPO, EN ESPECIAL EL PROFESOR, ENTIENDA EL ALCANCE DE LO DESARROLLADO Y QUE PUEDA REPRODUCIR SIN EL ESTUDIANTE EL AMBIENTE DE DESARROLLO Y EJECUTAR Y USAR LA APLICACIÓN SIN PROBLEMAS>
+# Arquitectura P2P y Comunicación entre procesos mediante API REST, RPC y MOM
 
-# <para borrar: renombre este archivo a README.md cuando lo vaya a usar en un caso específico>
+### ST0263-242 Tópicos Especiales en Telemática
 
-# nombre del proyecto, lab o actividad
-#
-# 1. breve descripción de la actividad
-#
-<texto descriptivo>
-## 1.1. Que aspectos cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
+### Estudiante(s):
+- Juan Manuel Gómez P. (jmgomezp@eafit.edu.co)
+- Miguel Ángel Hoyos V. (mahoyosv@eafit.edu.co)
 
-## 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
+### Profesor:
+- Edwin Nelson Montoya M. (emontoya@eafit.edu.co)
 
-# 2. información general de diseño de alto nivel, arquitectura, patrones, mejores prácticas utilizadas.
+## 1. Descripción
 
-# 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
+Este proyecto implementa un sistema de compartición de archivos distribuido y descentralizado basado en una red P2P estructurada utilizando el protocolo Chord/DHT (Distributed Hash Table). Cada nodo (peer) contiene microservicios para manejar la comunicación, el almacenamiento de archivos (servicio dummy) y el mantenimiento de la red P2P. El sistema soporta concurrencia y utiliza middleware para comunicación RPC con gRPC.
 
-## como se compila y ejecuta.
-## detalles del desarrollo.
-## detalles técnicos
-## descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
-## opcional - detalles de la organización del código por carpetas o descripción de algún archivo. (ESTRUCTURA DE DIRECTORIOS Y ARCHIVOS IMPORTANTE DEL PROYECTO, comando 'tree' de linux)
-## 
-## opcionalmente - si quiere mostrar resultados o pantallazos 
+### 1.1. Aspectos cumplidos
 
-# 4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
+### 1.2. Aspectos no cumplidos
 
-# IP o nombres de dominio en nube o en la máquina servidor.
+## 2. Diseño de alto nivel
 
-## descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
+### 2.1. Arquitectura
 
-## como se lanza el servidor.
+### 2.2. Patrones
 
-## una mini guia de como un usuario utilizaría el software o la aplicación
+### 2.3. Prácticas utilizadas
 
-## opcionalmente - si quiere mostrar resultados o pantallazos 
+## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
-# 5. otra información que considere relevante para esta actividad.
+### 3.1. Compilación y ejecución
+### 3.2. Detalles del desarrollo y detalles técnicos
+### 3.3. Parámetros
 
-# referencias:
-<debemos siempre reconocer los créditos de partes del código que reutilizaremos, así como referencias a youtube, o referencias bibliográficas utilizadas para desarrollar el proyecto o la actividad>
-## sitio1-url 
-## sitio2-url
-## url de donde tomo info para desarrollar este proyecto
+## 4. Referencias:
+- https://github.com/MNoumanAbbasi/Chord-DHT-for-File-Sharing/blob/master/Node.py
+- https://github.com/st0263eafit/st0263-242/blob/main/README-template.md
+- https://en.wikipedia.org/wiki/Chord_(peer-to-peer)
+- https://grpc.io/docs/languages/python/basics/

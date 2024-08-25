@@ -7,7 +7,9 @@ from pydantic import BaseModel
 import uvicorn
 import os
 import signal
-
+import grpc
+import peer_pb2
+import peer_pb2_grpc
 
 def get_hash(key):
     result = hashlib.sha1(key.encode())
@@ -24,6 +26,9 @@ class NodePeer:
         self.port = port
         self.id = None
         self.upper_limit = 128
+
+        self.channel = grpc.insecure_channel(f'127.0.0.1:50051')
+        self.stub = peer_pb2_grpc.PeerServiceStub(self.channel)
 
 
     def find_destination(self, id: int):
@@ -42,7 +47,7 @@ class NodePeer:
 
 
     def upload_file(self, file: str):
-        file_hash = get_hash(file)
+        file_hash = 5
         print("HASH DEL ARCHIVO:", file_hash)
         '''
             peer = [ip: str, port: int]
@@ -80,7 +85,7 @@ class NodePeer:
 
 
     def download_file(self, file: str):
-        file_hash = get_hash(file)
+        file_hash = 5
         peer = self.find_node(file_hash)
 
         response = requests.get(
@@ -136,40 +141,28 @@ class NodePeer:
 
 
     def request_node_list(self):
-        response = requests.get(
-            'http://127.0.0.1:8000/internal_table',
-            json={'id': self.id}
-        )
-        return response.json()
-
+        response = self.stub.GetInternalTable(peer_pb2.InternalTableRequest(id=self.id))
+        return [(node.id, (node.ip, node.port)) for node in response.nodes]
 
     def connect(self):
-        response = requests.post(
-            'http://127.0.0.1:8000/register',
-            json={'ip': self.ip, 'port': self.port}
-        )
-
-        print(response.json())
-
-        self.id = response.json()
-        #self.upper_limit = response_data['upper_limit']
+        response = self.stub.Register(peer_pb2.RegisterRequest(ip=self.ip, port=str(self.port)))
+        self.id = response.id
         self.node_list = self.request_node_list()
 
-
     def disconnect(self):
-        response = requests.post(
-            'http://127.0.0.1:8000/unregister',
-            json={'id': self.id}
-        )
-        print(response.json())
+        response = self.stub.Unregister(peer_pb2.UnregisterRequest(id=self.id))
+        print(response.message)
         self.id = None
-
         os.kill(os.getpid(), signal.SIGTERM)
 
 
     def check_external_files(self):
-        if not self.external_files():
+        if not self.external_files:
             pass
+        else:
+            for file in self.external_files:
+                self.node_list = self.request_node_list()
+                self.upload_file(file)
 
 
 def start_api_server(peer: NodePeer):
@@ -212,6 +205,7 @@ def start_api_server(peer: NodePeer):
 def main_menu(peer: NodePeer):
     while True:
         option = int(input('Choose an option: \n1. Disconnect \n2. Upload file \n3. Download file \n4. My attributes \n5. Update node list \n6. Exit\n'))
+        #peer.check_external_files()
 
         if option == 1:
             peer.disconnect()

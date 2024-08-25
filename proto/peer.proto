@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package peer;
+
+service PeerService {
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+  rpc Unregister (UnregisterRequest) returns (UnregisterResponse);
+  rpc GetInternalTable (InternalTableRequest) returns (InternalTableResponse);
+}
+
+message RegisterRequest {
+  string ip = 1;
+  string port = 2;
+}
+
+message RegisterResponse {
+  int32 id = 1;
+}
+
+message UnregisterRequest {
+  int32 id = 1;
+}
+
+message UnregisterResponse {
+  string message = 1;
+}
+
+message InternalTableRequest {
+  int32 id = 1;
+}
+
+message InternalTableResponse {
+  repeated NodeInfo nodes = 1;
+}
+
+message NodeInfo {
+  int32 id = 1;
+  string ip = 2;
+  string port = 3;
+}

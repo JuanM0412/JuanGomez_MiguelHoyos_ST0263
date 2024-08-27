@@ -49,6 +49,11 @@ class PeerServiceStub(object):
                 request_serializer=peer__pb2.InternalTableRequest.SerializeToString,
                 response_deserializer=peer__pb2.InternalTableResponse.FromString,
                 _registered_method=True)
+        self.GetInterval = channel.unary_unary(
+                '/peer.PeerService/GetInterval',
+                request_serializer=peer__pb2.InternalTableRequest.SerializeToString,
+                response_deserializer=peer__pb2.InternalTableResponse.FromString,
+                _registered_method=True)
 
 
 class PeerServiceServicer(object):
@@ -72,6 +77,13 @@ class PeerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetInterval(self, request, context):
+        """Nuevo método
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PeerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -87,6 +99,11 @@ def add_PeerServiceServicer_to_server(servicer, server):
             ),
             'GetInternalTable': grpc.unary_unary_rpc_method_handler(
                     servicer.GetInternalTable,
+                    request_deserializer=peer__pb2.InternalTableRequest.FromString,
+                    response_serializer=peer__pb2.InternalTableResponse.SerializeToString,
+            ),
+            'GetInterval': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetInterval,
                     request_deserializer=peer__pb2.InternalTableRequest.FromString,
                     response_serializer=peer__pb2.InternalTableResponse.SerializeToString,
             ),
@@ -170,6 +187,33 @@ class PeerService(object):
             request,
             target,
             '/peer.PeerService/GetInternalTable',
+            peer__pb2.InternalTableRequest.SerializeToString,
+            peer__pb2.InternalTableResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetInterval(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/peer.PeerService/GetInterval',
             peer__pb2.InternalTableRequest.SerializeToString,
             peer__pb2.InternalTableResponse.FromString,
             options,

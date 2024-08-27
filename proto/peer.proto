@@ -6,6 +6,7 @@ service PeerService {
   rpc Register (RegisterRequest) returns (RegisterResponse);
   rpc Unregister (UnregisterRequest) returns (UnregisterResponse);
   rpc GetInternalTable (InternalTableRequest) returns (InternalTableResponse);
+  rpc GetInterval (InternalTableRequest) returns (InternalTableResponse);  // Nuevo método
 }
 
 message RegisterRequest {

@@ -4,6 +4,7 @@ import grpc
 import peer_pb2
 import peer_pb2_grpc
 
+
 class Server(peer_pb2_grpc.PeerServiceServicer):
     def __init__(self, ip: str, port: int, intervals: list, sub_spaces: int, intervals_size: int):
         self.ip = ip
@@ -78,6 +79,30 @@ class Server(peer_pb2_grpc.PeerServiceServicer):
             response.nodes.append(node_info)
         
         return response
+    
+
+    def GetInterval(self, request, context):
+        node_id = request.id  # Extract the node_id from the request object
+
+        upper_bounds = list(self.sub_spaces.keys())
+        sub_interval = 0
+        while sub_interval < len(upper_bounds):
+            if node_id <= upper_bounds[sub_interval]:
+                break
+            sub_interval += 1
+
+        peers = self.sub_spaces[upper_bounds[sub_interval]]
+
+        while not peers:
+            peers = self.sub_spaces[upper_bounds[sub_interval]]
+            sub_interval -= 1    
+
+        response = peer_pb2.InternalTableResponse()
+        for peer in peers:
+            node_info = peer_pb2.NodeInfo(id=peer[0], ip=peer[1][0], port=peer[1][1])
+            response.nodes.append(node_info) 
+
+        return response
 
 
 def serve():
@@ -91,7 +116,7 @@ def serve():
 
 if __name__ == '__main__':
     max_nodes = 128
-    sub_spaces = 1
+    sub_spaces = 4
     intervals_size = int(max_nodes / sub_spaces)
     intervals = []
 

@@ -16,6 +16,7 @@ message RegisterRequest {
 
 message RegisterResponse {
   int32 id = 1;
+  int32 upper_bound = 2;
 }
 
 message UnregisterRequest {

@@ -25,7 +25,7 @@ class Server(peer_pb2_grpc.PeerServiceServicer):
                 available_id = min(self.free_ids[sub_interval])
                 self.free_ids[sub_interval].remove(available_id)
                 self.sub_spaces[upper_bound].append((available_id, (ip, port)))
-                return peer_pb2.RegisterResponse(id=available_id)
+                return peer_pb2.RegisterResponse(id=available_id, upper_bound=upper_bound)
             sub_interval += 1
 
         rand = random.randint(0, sub_interval - 1)
@@ -34,7 +34,7 @@ class Server(peer_pb2_grpc.PeerServiceServicer):
         self.free_ids[rand].remove(available_id)
         self.sub_spaces[upper_bounds[rand]].append((available_id, (ip, port)))
 
-        return peer_pb2.RegisterResponse(id=available_id)
+        return peer_pb2.RegisterResponse(id=available_id, upper_bound=upper_bounds[rand])
 
 
     def Unregister(self, request, context):

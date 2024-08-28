@@ -2,6 +2,8 @@ import hashlib
 import threading
 import requests
 import argparse
+import time
+import random
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
@@ -25,7 +27,7 @@ class NodePeer:
         self.ip = ip
         self.port = port
         self.id = None
-        self.upper_limit = 66
+        self.upper_limit = None
 
         self.channel = grpc.insecure_channel(f'127.0.0.1:50051')
         self.stub = peer_pb2_grpc.PeerServiceStub(self.channel)
@@ -39,14 +41,15 @@ class NodePeer:
             if node[0] == id:
                 return (node[1], True)
         peer_found = False
-        
+
         if not peer_found:
-            return (node_list[0][1], False)
+            random_node = random.randint(0, len(node_list) - 1)
+            return (node_list[random_node][1], False)
 
 
     def upload_file(self, file: str):
         file_hash = get_hash(file)
-        print("HASH DEL ARCHIVO:", file_hash)
+        # print("HASH DEL ARCHIVO:", file_hash)
         '''
             peer = [ip: str, port: int]
         '''
@@ -57,13 +60,13 @@ class NodePeer:
                 f'http://{peer[0]}:{peer[1]}/receive_own_file',
                 json={'name': file, 'hash_value': file_hash}
             )
-            return response.json()
+            return True
         else:
             response = requests.post(
                 f'http://{peer[0]}:{peer[1]}/receive_external_file',
                 json={'name': file, 'hash_value': file_hash}
             )
-            return response.json()
+            return False
 
 
     def find_node(self, id: int):
@@ -89,28 +92,26 @@ class NodePeer:
             json={'name': file, 'hash_value': file_hash}
         )
         response = response.json()
-        print(response)
+        
         if response != '0':
             self.downloaded_files.append(response)
+            print(f'Archivo {response} descargado')
         else:
             print('File does not exist')
 
 
-    # Chequear para cuando el nombre del archivo no existe
-    def send_file(self, file: str, hash_value: int):
+    def send_file(self, file_name: str, hash_value: int):
         # Change names
         if hash_value in self.own_files.keys():
             files = self.own_files[hash_value]
-            for flie in files:
-                if flie == file:
-                    print('Archivo encontrado en own')
-                    return file
+            for file in files:
+                if file == file_name:
+                    return file_name
         elif hash_value in self.external_files.keys():
             files = self.external_files[hash_value]
-            for flie in files:
-                if flie == file:
-                    print('Archivo encontrado en shared')
-                    return file
+            for file in files:
+                if file == file_name:
+                    return file_name
         else:
             return '0'
 
@@ -123,7 +124,7 @@ class NodePeer:
         else:
             self.own_files[hash_value] = {file}
 
-        print('Archivo propio recibido')
+        #print('Archivo propio recibido')
 
     
     def receive_external_file(self, file: str, hash_value: int):
@@ -134,7 +135,7 @@ class NodePeer:
         else:
             self.external_files[hash_value] = {file}
 
-        print('Archivo externo recibido')
+        #print('Archivo externo recibido')
 
 
     def request_node_list(self):
@@ -150,7 +151,7 @@ class NodePeer:
     def connect(self):
         response = self.stub.Register(peer_pb2.RegisterRequest(ip=self.ip, port=str(self.port)))
         self.id = response.id
-        self.node_list = self.request_node_list()
+        self.upper_limit = response.upper_bound
 
 
     def disconnect(self):
@@ -161,12 +162,26 @@ class NodePeer:
 
 
     def check_external_files(self):
-        if not self.external_files:
-            pass
-        else:
-            for file in self.external_files:
-                self.node_list = self.request_node_list()
-                self.upload_file(file)
+        while True:
+            time.sleep(10)
+            if not self.external_files:
+                continue
+            else:
+                files_to_remove = []
+                for hash_value, files in self.external_files.items():
+                    for file in files:
+                        # Intentar subir el archivo al nodo correspondiente
+                        response = self.upload_file(file)
+                        if response:
+                            # Si el archivo llegó a su destino, marcarlo para eliminarlo del peer actual
+                            files_to_remove.append((hash_value, file))
+                
+                # Eliminar los archivos que ya llegaron a su nodo correspondiente
+                for hash_value, file in files_to_remove:
+                    self.external_files[hash_value].remove(file)
+                    if not self.external_files[hash_value]:  # Si no quedan archivos para ese hash, eliminar la clave
+                        del self.external_files[hash_value]
+
 
 
 def start_api_server(peer: NodePeer):
@@ -209,9 +224,6 @@ def start_api_server(peer: NodePeer):
 def main_menu(peer: NodePeer):
     while True:
         option = int(input('Choose an option: \n1. Disconnect \n2. Upload file \n3. Download file \n4. My attributes \n5. Update node list \n6. Exit\n'))
-        # peer.check_external_files()
-        # interval = peer.request_interval()
-        # print(interval)
 
         if option == 1:
             peer.disconnect()
@@ -251,8 +263,16 @@ if __name__ == '__main__':
 
     # Iniciar el servidor API en un thread separado
     api_thread = threading.Thread(target=start_api_server, args=(peer,))
+    api_thread.daemon = True
     api_thread.start()
 
     # Iniciar el menú principal
     main_thread = threading.Thread(target=main_menu, args=(peer,))
+    main_thread.daemon = True
     main_thread.start()
+
+    check_thread = threading.Thread(target=peer.check_external_files)
+    check_thread.daemon = True
+    check_thread.start()
+
+    main_thread.join()

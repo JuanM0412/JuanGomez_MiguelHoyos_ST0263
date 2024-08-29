@@ -6,7 +6,7 @@ from src.proto import peer_pb2, peer_pb2_grpc
 
 
 class NodePeer(peer_pb2_grpc.PeerServiceServicer):
-    def __init__(self, ip: str, port: int):
+    def __init__(self, ip: str, port: int, server_ip: str, server_port: str):
         self.own_files = {}
         self.external_files = {}
         self.downloaded_files = []
@@ -15,7 +15,7 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
         self.id = None
         self.upper_limit = None
 
-        self.server_channel = grpc.insecure_channel(f'127.0.0.1:50051')
+        self.server_channel = grpc.insecure_channel(f'{server_ip}:{server_port}')
         self.server_stub = peer_pb2_grpc.PeerServiceStub(self.server_channel)
 
 

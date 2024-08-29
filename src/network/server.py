@@ -104,25 +104,10 @@ class Server(peer_pb2_grpc.PeerServiceServicer):
         return response
 
 
-def serve():
+def serve(ip: str, port: int, intervals: list, sub_spaces: int, intervals_size: int):
     print('Server is running')
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    peer_pb2_grpc.add_PeerServiceServicer_to_server(Server(ip='127.0.0.1', port=2000, intervals=intervals, sub_spaces=sub_spaces, intervals_size=intervals_size), server)
-    server.add_insecure_port('[::]:50051')
+    peer_pb2_grpc.add_PeerServiceServicer_to_server(Server(ip=ip, port=port, intervals=intervals, sub_spaces=sub_spaces, intervals_size=intervals_size), server)
+    server.add_insecure_port(f'{ip}:{port}')
     server.start()
     server.wait_for_termination()
-
-
-if __name__ == '__main__':
-    max_nodes = 128
-    sub_spaces = 4
-    intervals_size = int(max_nodes / sub_spaces)
-    intervals = []
-
-    for i in range(sub_spaces):
-        start = i * intervals_size + 1
-        end = (i + 1) * intervals_size
-        id_ranges = set(range(start, end + 1))
-        intervals.append(id_ranges)
-
-    serve()

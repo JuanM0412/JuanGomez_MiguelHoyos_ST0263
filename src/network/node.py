@@ -194,7 +194,7 @@ def main_menu(peer: NodePeer):
             node_list = peer.request_node_list()
             print(node_list)
         elif option == 6:
-            print("Exiting...")
+            peer.disconnect()
             break
         else:
             print("Invalid option. Please try again.")

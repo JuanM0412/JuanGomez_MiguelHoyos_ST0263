@@ -6,7 +6,12 @@ service PeerService {
   rpc Register (RegisterRequest) returns (RegisterResponse);
   rpc Unregister (UnregisterRequest) returns (UnregisterResponse);
   rpc GetInternalTable (InternalTableRequest) returns (InternalTableResponse);
-  rpc GetInterval (InternalTableRequest) returns (InternalTableResponse);  // Nuevo método
+  rpc GetInterval (InternalTableRequest) returns (InternalTableResponse);
+  
+  // Servicios para manejar archivos
+  rpc ReceiveOwnFile (File) returns (FileResponse);
+  rpc ReceiveExternalFile (File) returns (FileResponse);
+  rpc SendFile (File) returns (FileResponse);
 }
 
 message RegisterRequest {
@@ -39,4 +44,15 @@ message NodeInfo {
   int32 id = 1;
   string ip = 2;
   string port = 3;
+}
+
+message File {
+  string name = 1;
+  int32 hash_value = 2;
+}
+
+message FileResponse {
+  string status = 1;
+  string message = 2;
+  string file_name = 3;
 }

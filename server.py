@@ -82,7 +82,7 @@ class Server(peer_pb2_grpc.PeerServiceServicer):
     
 
     def GetInterval(self, request, context):
-        node_id = request.id  # Extract the node_id from the request object
+        node_id = request.id
 
         upper_bounds = list(self.sub_spaces.keys())
         sub_interval = 0

@@ -54,6 +54,21 @@ class PeerServiceStub(object):
                 request_serializer=peer__pb2.InternalTableRequest.SerializeToString,
                 response_deserializer=peer__pb2.InternalTableResponse.FromString,
                 _registered_method=True)
+        self.ReceiveOwnFile = channel.unary_unary(
+                '/peer.PeerService/ReceiveOwnFile',
+                request_serializer=peer__pb2.File.SerializeToString,
+                response_deserializer=peer__pb2.FileResponse.FromString,
+                _registered_method=True)
+        self.ReceiveExternalFile = channel.unary_unary(
+                '/peer.PeerService/ReceiveExternalFile',
+                request_serializer=peer__pb2.File.SerializeToString,
+                response_deserializer=peer__pb2.FileResponse.FromString,
+                _registered_method=True)
+        self.SendFile = channel.unary_unary(
+                '/peer.PeerService/SendFile',
+                request_serializer=peer__pb2.File.SerializeToString,
+                response_deserializer=peer__pb2.FileResponse.FromString,
+                _registered_method=True)
 
 
 class PeerServiceServicer(object):
@@ -78,8 +93,26 @@ class PeerServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetInterval(self, request, context):
-        """Nuevo método
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReceiveOwnFile(self, request, context):
+        """Servicios para manejar archivos
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReceiveExternalFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SendFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -106,6 +139,21 @@ def add_PeerServiceServicer_to_server(servicer, server):
                     servicer.GetInterval,
                     request_deserializer=peer__pb2.InternalTableRequest.FromString,
                     response_serializer=peer__pb2.InternalTableResponse.SerializeToString,
+            ),
+            'ReceiveOwnFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReceiveOwnFile,
+                    request_deserializer=peer__pb2.File.FromString,
+                    response_serializer=peer__pb2.FileResponse.SerializeToString,
+            ),
+            'ReceiveExternalFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReceiveExternalFile,
+                    request_deserializer=peer__pb2.File.FromString,
+                    response_serializer=peer__pb2.FileResponse.SerializeToString,
+            ),
+            'SendFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.SendFile,
+                    request_deserializer=peer__pb2.File.FromString,
+                    response_serializer=peer__pb2.FileResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -216,6 +264,87 @@ class PeerService(object):
             '/peer.PeerService/GetInterval',
             peer__pb2.InternalTableRequest.SerializeToString,
             peer__pb2.InternalTableResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReceiveOwnFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/peer.PeerService/ReceiveOwnFile',
+            peer__pb2.File.SerializeToString,
+            peer__pb2.FileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReceiveExternalFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/peer.PeerService/ReceiveExternalFile',
+            peer__pb2.File.SerializeToString,
+            peer__pb2.FileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SendFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/peer.PeerService/SendFile',
+            peer__pb2.File.SerializeToString,
+            peer__pb2.FileResponse.FromString,
             options,
             channel_credentials,
             insecure,

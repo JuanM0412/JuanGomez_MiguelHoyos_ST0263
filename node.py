@@ -1,17 +1,9 @@
-import hashlib
-import threading
-import requests
-import argparse
-import time
-import random
+import hashlib, threading, requests, argparse, time, random
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
-import os
-import signal
-import grpc
-import peer_pb2
-import peer_pb2_grpc
+import os, signal
+import grpc, peer_pb2, peer_pb2_grpc
 
 
 def get_hash(key):
@@ -101,7 +93,6 @@ class NodePeer:
 
 
     def send_file(self, file_name: str, hash_value: int):
-        # Change names
         if hash_value in self.own_files.keys():
             files = self.own_files[hash_value]
             for file in files:
@@ -170,26 +161,24 @@ class NodePeer:
                 files_to_remove = []
                 for hash_value, files in self.external_files.items():
                     for file in files:
-                        # Intentar subir el archivo al nodo correspondiente
                         response = self.upload_file(file)
                         if response:
-                            # Si el archivo llegó a su destino, marcarlo para eliminarlo del peer actual
                             files_to_remove.append((hash_value, file))
                 
-                # Eliminar los archivos que ya llegaron a su nodo correspondiente
                 for hash_value, file in files_to_remove:
                     self.external_files[hash_value].remove(file)
-                    if not self.external_files[hash_value]:  # Si no quedan archivos para ese hash, eliminar la clave
+                    if not self.external_files[hash_value]:
                         del self.external_files[hash_value]
-
 
 
 def start_api_server(peer: NodePeer):
     app = FastAPI()
 
+
     class File(BaseModel):
         name: str
         hash_value: int
+
 
     @app.post('/receive_own_file')
     def receive_own_file(file: File):
@@ -255,18 +244,13 @@ if __name__ == '__main__':
     parser.add_argument('--port', type=int, required=True, help='Port number for the NodePeer')
     args = parser.parse_args()
 
-    # Instanciar el nodo
     peer = NodePeer('127.0.0.1', args.port)
-
-    # Conectar el nodo
     peer.connect()
 
-    # Iniciar el servidor API en un thread separado
     api_thread = threading.Thread(target=start_api_server, args=(peer,))
     api_thread.daemon = True
     api_thread.start()
 
-    # Iniciar el menú principal
     main_thread = threading.Thread(target=main_menu, args=(peer,))
     main_thread.daemon = True
     main_thread.start()

@@ -1,0 +1,6 @@
+fastapi
+pydantic
+uvicorn
+grpcio
+grpcio-tools
+requests

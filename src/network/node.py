@@ -172,29 +172,34 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
 
 
 def main_menu(peer: NodePeer):
-    while True:
-        option = int(input('Choose an option: \n1. Disconnect \n2. Upload file \n3. Download file \n4. My attributes \n5. Update node list \n6. Exit\n'))
+    try:
+        while True:
+            option = int(input('Choose an option: \n1. Disconnect \n2. Upload file \n3. Download file \n4. My attributes \n5. Update node list \n6. Exit\n'))
 
-        if option == 1:
-            peer.disconnect()
-            break
-        elif option == 2:
-            file_name = input('Enter the file name to upload: ')
-            peer.upload_file(file_name)
-        elif option == 3:
-            file_name = input('Enter the file name to download: ')
-            peer.download_file(file_name)
-        elif option == 4:
-            print(f'ID: {peer.id}')
-            print(f'Upper limit: {peer.upper_limit}')
-            print(f'Own file list: {peer.own_files}')
-            print(f'External file list: {peer.external_files}')
-            print(f'Downloaded files: {peer.downloaded_files}')
-        elif option == 5:
-            node_list = peer.request_node_list()
-            print(node_list)
-        elif option == 6:
-            peer.disconnect()
-            break
-        else:
-            print("Invalid option. Please try again.")
+            if option == 1:
+                peer.disconnect()
+                break
+            elif option == 2:
+                file_name = input('Enter the file name to upload: ')
+                peer.upload_file(file_name)
+            elif option == 3:
+                file_name = input('Enter the file name to download: ')
+                peer.download_file(file_name)
+            elif option == 4:
+                print(f'ID: {peer.id}')
+                print(f'Upper limit: {peer.upper_limit}')
+                print(f'Own file list: {peer.own_files}')
+                print(f'External file list: {peer.external_files}')
+                print(f'Downloaded files: {peer.downloaded_files}')
+            elif option == 5:
+                node_list = peer.request_node_list()
+                print(node_list)
+            elif option == 6:
+                peer.disconnect()
+                break
+            else:
+                print("Invalid option. Please try again.")
+    except KeyboardInterrupt:
+        print("\nCtrl+C pressed. Disconnecting...")
+    finally:
+        peer.disconnect()

@@ -12,17 +12,27 @@ if __name__ == '__main__':
 
     peer = NodePeer('127.0.0.1', args.port, server_ip, server_port)
     peer.connect()
+    
+    try:
+        # Start server in a separate thread
+        server_thread = threading.Thread(target=peer.serve)
+        server_thread.start()
 
-    server_thread = threading.Thread(target=peer.serve)
-    server_thread.daemon = True
-    server_thread.start()
+        # Start the main menu in a separate thread
+        main_thread = threading.Thread(target=main_menu, args=(peer,))
+        main_thread.start()
 
-    main_thread = threading.Thread(target=main_menu, args=(peer,))
-    main_thread.daemon = True
-    main_thread.start()
+        # Start checking external files in a separate thread
+        check_thread = threading.Thread(target=peer.check_external_files)
+        check_thread.start()
 
-    check_thread = threading.Thread(target=peer.check_external_files)
-    check_thread.daemon = True
-    check_thread.start()
+        # Wait for threads to complete
+        main_thread.join()
+    except KeyboardInterrupt:
+        print("\nCtrl+C pressed. Shutting down...")
+    finally:
+        peer.disconnect()
 
-    main_thread.join()
+        # Ensure all threads have finished
+        server_thread.join()
+        check_thread.join()

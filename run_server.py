@@ -1,11 +1,10 @@
 from src.network.server import *
-from bootstrap import get_server_info
+from bootstrap import *
 
 
 if __name__ == '__main__':
     ip, port = get_server_info()
-    max_nodes = 128
-    sub_spaces = 4
+    max_nodes, sub_spaces = get_intervals_info()
 
     intervals_size = int(max_nodes / sub_spaces)
     intervals = []

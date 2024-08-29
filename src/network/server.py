@@ -1,8 +1,7 @@
 import random
 from concurrent import futures
 import grpc
-import peer_pb2
-import peer_pb2_grpc
+from src.proto import peer_pb2, peer_pb2_grpc
 
 
 class Server(peer_pb2_grpc.PeerServiceServicer):
@@ -60,7 +59,7 @@ class Server(peer_pb2_grpc.PeerServiceServicer):
             self.sub_spaces[upper_bounds[sub_interval]].pop(index_to_remove)
             return peer_pb2.UnregisterResponse(message="Successfully disconnected")
         
-        return peer_pb2.UnregisterResponse(message="Error. Ese id de mierda no existe")
+        return peer_pb2.UnregisterResponse(message="Error: id does not exist")
 
 
     def GetInternalTable(self, request, context):

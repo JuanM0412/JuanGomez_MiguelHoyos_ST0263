@@ -1,21 +1,20 @@
 # Usa una imagen base de Python
-FROM python:3.11-slim
+FROM python:3.12-slim
 
-# Configura el directorio de trabajo
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia los archivos necesarios al contenedor
-COPY . /app
+# Copiar los archivos de requerimientos y los archivos del proyecto
+COPY requirements.txt .
 
-# Instala las dependencias del proyecto
+# Instalar las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Compila el archivo .proto a archivos Python
-RUN python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. peer.proto
+# Copiar todo el contenido del proyecto al directorio de trabajo
+COPY . .
 
 # Expone los puertos necesarios (ajusta según tus necesidades)
-EXPOSE 50051  # Puerto para gRPC
-EXPOSE 8000   # Puerto para FastAPI
+EXPOSE 50051
 
 # Comando por defecto para ejecutar el nodo
-CMD ["python", "node.py"]
+CMD ["python", "run_server.py"]

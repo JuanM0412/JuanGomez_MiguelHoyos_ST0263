@@ -23,7 +23,11 @@ El administrador de la red, al inicializar el servidor, define el número máxim
 
 ### 1.1. Aspectos cumplidos
 
+Se obtuvo un excelente resultado final, donde la red se comporta de manera estable, permitiendo el envío y descarga de archivos de manera eficiente. La topología de la red se forma correctamente y todas las pruebas realizadas se pasaron satisfactoriamente. Además del reto de idear un nuevo mecanismo de indexación y búsqueda de archivos, así como de estructuración de la red, se aprendió mucho durante el proceso.
+
 ### 1.2. Aspectos no cumplidos
+
+No se pudo implementar Chord DHT, que en la literatura se considera uno de los más óptimos para este tipo de redes. Sin embargo, esto no se considera del todo negativo, ya que la solución planteada también ofrece un muy buen rendimiento. Además, aunque los archivos no se envían directamente a través de la red, esto tampoco se considera un aspecto negativo. Dado que en la definición del proyecto y en los requerimientos solicitados los archivos eran dummy, cumplimos con lo esperado.
 
 ## 2. Diseño de alto nivel
 
@@ -31,16 +35,18 @@ El administrador de la red, al inicializar el servidor, define el número máxim
 
 ### 2.2. Patrones
 
+No utilizamos ningún patrón de diseño específico, pero sí aplicamos los principios SOLID. El código está bien desacoplado. Además, si se quisiera implementar un patrón de diseño, como el patrón Observer para la función de reenviar los archivos que no son propios de la zona, se podría hacer de manera muy sencilla. También sería posible implementar un Singleton para la creación del servidor; sin embargo, dado que el código está diseñado para que no haya más de un servidor, en ese sentido se cumplió con lo requerido.
+
 ### 2.3. Prácticas utilizadas
 
 ## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
 ### 3.1. Compilación y ejecución
 ### 3.2. Detalles del desarrollo y detalles técnicos
+Utilizamos Python como lenguaje de programación. Entre las bibliotecas más relevantes que empleamos, encontramos las bibliotecas nativas de Python, como random y os, entre otras necesarias para la implementación de ciertas funcionalidades. Nos enfocamos en evitar un alto acoplamiento en nuestro desarrollo. Además, utilizamos Docker como servicio de virtualización y desplegamos el servidor en instancias EC2 de AWS.
 ### 3.3. Parámetros
 
 ## 4. Referencias:
-- https://github.com/MNoumanAbbasi/Chord-DHT-for-File-Sharing/blob/master/Node.py
 - https://github.com/st0263eafit/st0263-242/blob/main/README-template.md
 - https://en.wikipedia.org/wiki/Chord_(peer-to-peer)
 - https://grpc.io/docs/languages/python/basics/

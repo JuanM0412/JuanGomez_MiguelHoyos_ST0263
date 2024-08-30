@@ -27,26 +27,39 @@ Se obtuvo un excelente resultado final, donde la red se comporta de manera estab
 
 ### 1.2. Aspectos no cumplidos
 
-No se pudo implementar Chord DHT, que en la literatura se considera uno de los más óptimos para este tipo de redes. Sin embargo, esto no se considera del todo negativo, ya que la solución planteada también ofrece un muy buen rendimiento. Además, aunque los archivos no se envían directamente a través de la red, esto tampoco se considera un aspecto negativo. Dado que en la definición del proyecto y en los requerimientos solicitados los archivos eran dummy, cumplimos con lo esperado.
+No se pudo implementar Chord DHT, que en la literatura se considera uno de los más óptimos para este tipo de redes. Sin embargo, esto no se considera del todo negativo, ya que la solución planteada también ofrece un muy buen rendimiento. Además, aunque los archivos no se envían directamente a través de la red, esto tampoco se considera un aspecto negativo. Dado que en la definición del proyecto y en los requerimientos solicitados los archivos eran dummy, se cumplió con lo esperado.
 
 ## 2. Diseño de alto nivel
 
 ### 2.1. Arquitectura
 
+En el siguiente diagrama simplificado de la arquitectura, se observa cómo todos los peers están conectados al servidor para ejecutar funciones como registrarse en la red, salir de la red y solicitar los intervalos de peers, los cuales procesarán internamente para enviar y recibir archivos. Todas las comunicaciones se realizan mediante gRPC, y no hay restricciones para que los peers se comuniquen entre sí (aunque por simplicidad, no se muestra la conexión entre todos los peers en el diagrama).
+
+![a844222f-b75b-4c09-b199-5929f62766eb](https://github.com/user-attachments/assets/00c0e4b3-72cd-4432-8610-aedb0fe3c284)
+
+En el siguiente diagrama se observa la gestión de subespacios por parte del servidor para una red de 100 nodos con un tamaño de subespacio de 25. En la primera imagen, se muestran todos los subintervalos definidos pero vacíos. Posteriormente, en la segunda imagen, se ve cómo se asigna el primer peer al primer subintervalo.
+
+En la última imagen, se observa la red bien constituida. Para el correcto funcionamiento de la búsqueda y localización de archivos, los peers se ubican dentro de los intervalos en orden de llegada, de menor a mayor. Es decir, después de la llegada del primer peer, se añadió el segundo nodo, que tomó el ID 26 en el segundo subintervalo. El tercer peer que decidió unirse a la red tomó el ID 51 en el tercer intervalo, y finalmente, el cuarto peer se unió con el ID 76 en el último subintervalo. A partir de ese punto, todos los peers que llegaron se asignaron de manera aleatoria dentro de cada subintervalo, pero respetando el orden de asignación de IDs, que también va de menor a mayor.
+
+![fab133ea-06bf-47f6-95a9-9e131e62639a](https://github.com/user-attachments/assets/b231d9e2-1108-40d7-a7a9-9db9e265b0dd)
+
 ### 2.2. Patrones
 
-No utilizamos ningún patrón de diseño específico, pero sí aplicamos los principios SOLID. El código está bien desacoplado. Además, si se quisiera implementar un patrón de diseño, como el patrón Observer para la función de reenviar los archivos que no son propios de la zona, se podría hacer de manera muy sencilla. También sería posible implementar un Singleton para la creación del servidor; sin embargo, dado que el código está diseñado para que no haya más de un servidor, en ese sentido se cumplió con lo requerido.
+No se utilizó ningún patrón de diseño específico, pero se aplicaron los principios SOLID. El código está bien desacoplado. Además, si se quisiera implementar un patrón de diseño, como el patrón Observer para la función de reenviar los archivos que no son propios de la zona, se podría hacer de manera muy sencilla. También sería posible implementar un Singleton para la creación del servidor; sin embargo, dado que el código está diseñado para que no haya más de un servidor, en ese sentido se cumplió con lo requerido.
 
 ### 2.3. Prácticas utilizadas
 
-## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
+## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerías, paquetes, etc., con sus números de versiones.
 
 ### 3.1. Compilación y ejecución
+
 ### 3.2. Detalles del desarrollo y detalles técnicos
-Utilizamos Python como lenguaje de programación. Entre las bibliotecas más relevantes que empleamos, encontramos las bibliotecas nativas de Python, como random y os, entre otras necesarias para la implementación de ciertas funcionalidades. Nos enfocamos en evitar un alto acoplamiento en nuestro desarrollo. Además, utilizamos Docker como servicio de virtualización y desplegamos el servidor en instancias EC2 de AWS.
+
+Se utilizó Python como lenguaje de programación. Entre las bibliotecas más relevantes que se emplearon, se encuentran las bibliotecas nativas de Python, como `random` y `os`, entre otras necesarias para la implementación de ciertas funcionalidades. Se evitó un alto acoplamiento en el desarrollo. Además, se utilizó Docker como servicio de virtualización y se desplegó el servidor en instancias EC2 de AWS.
+
 ### 3.3. Parámetros
 
 ## 4. Referencias:
-- https://github.com/st0263eafit/st0263-242/blob/main/README-template.md
-- https://en.wikipedia.org/wiki/Chord_(peer-to-peer)
-- https://grpc.io/docs/languages/python/basics/
+- [https://github.com/st0263eafit/st0263-242/blob/main/README-template.md](https://github.com/st0263eafit/st0263-242/blob/main/README-template.md)
+- [https://en.wikipedia.org/wiki/Chord_(peer-to-peer)](https://en.wikipedia.org/wiki/Chord_(peer-to-peer))
+- [https://grpc.io/docs/languages/python/basics/](https://grpc.io/docs/languages/python/basics/)

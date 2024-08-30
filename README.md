@@ -15,7 +15,15 @@
 
 ## 1. Descripción
 
-Este proyecto implementa un sistema de compartición de archivos distribuido y descentralizado basado en una red P2P estructurada utilizando el protocolo Chord/DHT (Distributed Hash Table). Cada nodo (peer) contiene microservicios para manejar la comunicación, el almacenamiento de archivos (servicio dummy) y el mantenimiento de la red P2P. El sistema soporta concurrencia y utiliza middleware para comunicación RPC con gRPC.
+Aquí tienes el diálogo ordenado y limpio:
+
+---
+
+Este proyecto implementa un sistema de compartición de archivos distribuido y descentralizado basado en una red P2P utilizando DHT y un algoritmo propio de gestión de la red, que se describirá a lo largo del proyecto. El sistema soporta concurrencia y utiliza un middleware para comunicación RPC mediante la tecnología gRPC.
+
+La propuesta define un pequeño servidor que se encarga de armar y mantener la topología de la red gestionando los peers que desean registrarse o abandonar la red. El envío y recepción de archivos dummy se realiza directamente entre los peers. El proyecto plantea una topología basada en pools de peers agrupados en subintervalos, con el objetivo de optimizar el proceso de búsqueda de recursos dentro de la red.
+
+El administrador de la red, al inicializar el servidor, define el número máximo de nodos que podrán estar en la red y el tamaño de cada subintervalo. Por ejemplo, en una red donde el número máximo de nodos es 100 y el tamaño del intervalo es 25, se obtendrán un total de cuatro subespacios. Esto significa que, en el peor de los casos, se tendrán que recorrer como máximo 25 nodos para buscar un archivo. Si se desea mayor optimización, se puede reducir el tamaño del subintervalo. En promedio, el número de búsquedas necesarias para localizar un archivo es la mitad del tamaño del intervalo.
 
 ### 1.1. Aspectos cumplidos
 

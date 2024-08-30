@@ -15,10 +15,6 @@
 
 ## 1. Descripción
 
-Aquí tienes el diálogo ordenado y limpio:
-
----
-
 Este proyecto implementa un sistema de compartición de archivos distribuido y descentralizado basado en una red P2P utilizando DHT y un algoritmo propio de gestión de la red, que se describirá a lo largo del proyecto. El sistema soporta concurrencia y utiliza un middleware para comunicación RPC mediante la tecnología gRPC.
 
 La propuesta define un pequeño servidor que se encarga de armar y mantener la topología de la red gestionando los peers que desean registrarse o abandonar la red. El envío y recepción de archivos dummy se realiza directamente entre los peers. El proyecto plantea una topología basada en pools de peers agrupados en subintervalos, con el objetivo de optimizar el proceso de búsqueda de recursos dentro de la red.

@@ -57,9 +57,9 @@ class Server(peer_pb2_grpc.PeerServiceServicer):
         if founded:
             self.free_ids[sub_interval].add(node_id)
             self.sub_spaces[upper_bounds[sub_interval]].pop(index_to_remove)
-            return peer_pb2.UnregisterResponse(message="Successfully disconnected")
+            return peer_pb2.UnregisterResponse(message='Successfully disconnected')
         
-        return peer_pb2.UnregisterResponse(message="Error: id does not exist")
+        return peer_pb2.UnregisterResponse(message='Error: id does not exist')
 
 
     def GetInternalTable(self, request, context):

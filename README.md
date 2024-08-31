@@ -55,7 +55,7 @@ No se utilizó ningún patrón de diseño específico, pero se aplicaron los pri
 
 ### 3.2. Detalles del desarrollo y detalles técnicos
 
-Se utilizó Python como lenguaje de programación. Entre las bibliotecas más relevantes que se emplearon, se encuentran las bibliotecas nativas de Python, como `random` y `os`, entre otras necesarias para la implementación de ciertas funcionalidades. Se evitó un alto acoplamiento en el desarrollo. Además, se utilizó Docker como servicio de virtualización y se desplegó el servidor en instancias EC2 de AWS.
+Se utilizó Python como lenguaje de programación. Entre las bibliotecas más relevantes que se emplearon, se encuentran las bibliotecas nativas de Python, como random y os, entre otras necesarias para la implementación de ciertas funcionalidades. Se evitó un alto acoplamiento en el desarrollo. Además, se utilizó Docker como servicio de virtualización y se desplegó el servidor en instancias EC2 de AWS.
 
 ### 3.3. Parámetros
 

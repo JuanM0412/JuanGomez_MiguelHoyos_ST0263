@@ -1,10 +1,16 @@
 from src.network.server import *
-from bootstrap import *
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
 
 
 if __name__ == '__main__':
-    ip, port = get_server_info()
-    max_nodes, sub_spaces = get_intervals_info()
+    ip = os.getenv('SERVER_IP')
+    port = os.getenv('SERVER_PORT')
+    max_nodes = int(os.getenv('MAX_NODES'))
+    sub_spaces = int(os.getenv('SUB_SPACES'))
 
     intervals_size = int(max_nodes / sub_spaces)
     intervals = []

@@ -19,7 +19,7 @@ Este proyecto implementa un sistema de compartición de archivos distribuido y d
 
 La propuesta define un pequeño servidor que se encarga de armar y mantener la topología de la red gestionando los peers que desean registrarse o abandonar la red. El envío y recepción de archivos dummy se realiza directamente entre los peers. El proyecto plantea una topología basada en pools de peers agrupados en subintervalos, con el objetivo de optimizar el proceso de búsqueda de recursos dentro de la red.
 
-El administrador de la red, al inicializar el servidor, define el número máximo de nodos que podrán estar en la red y el tamaño de cada subintervalo. Por ejemplo, en una red donde el número máximo de nodos es 100 y el tamaño del intervalo es 25, se obtendrán un total de cuatro subespacios. Esto significa que, en el peor de los casos, se tendrán que recorrer como máximo 25 nodos para buscar un archivo. Si se desea mayor optimización, se puede reducir el tamaño del subintervalo. En promedio, el número de búsquedas necesarias para localizar un archivo es la mitad del tamaño del intervalo.
+El administrador de la red, al inicializar el servidor, define el número máximo de nodos que podrán estar en la red y el numero de subintervalos. Por ejemplo, se haran los diagramas basados en una red donde el número máximo de nodos es 100 y el numero de sub-intervalos es 4. Esto significa que, en el peor de los casos, se tendrán que recorrer como máximo 25 nodos para buscar un archivo. Si se desea mayor optimización, se puede reducir el tamaño del subintervalo. En promedio, el número de búsquedas necesarias para localizar un archivo es la mitad del tamaño del intervalo.
 
 ### 1.1. Aspectos cumplidos
 
@@ -33,10 +33,18 @@ No se pudo implementar Chord DHT, que en la literatura se considera uno de los m
 
 ### 2.1. Arquitectura
 
+#### 2.1.0 Diagrama de clases
+
+![8c05efdb-4a41-4d0a-b86a-bbbe7c0dbd6b](https://github.com/user-attachments/assets/52eeae76-224b-49a0-9fea-8d6fb3890f2c)
+
+![21eba605-ffe5-4cca-87f3-90207f028dab](https://github.com/user-attachments/assets/c126ff84-4e87-4cf4-9492-853a2ce84b4a)
+
+#### 2.1.1 Diagrama de arquitectura 
 En el siguiente diagrama simplificado de la arquitectura, se observa cómo todos los peers están conectados al servidor para ejecutar funciones como registrarse en la red, salir de la red y solicitar los intervalos de peers, los cuales procesarán internamente para enviar y recibir archivos. Todas las comunicaciones se realizan mediante gRPC, y no hay restricciones para que los peers se comuniquen entre sí (aunque por simplicidad, no se muestra la conexión entre todos los peers en el diagrama).
 
 ![a844222f-b75b-4c09-b199-5929f62766eb](https://github.com/user-attachments/assets/00c0e4b3-72cd-4432-8610-aedb0fe3c284)
 
+#### 2.1.2 Diagrama de sub-espacios 
 En el siguiente diagrama se observa la gestión de subespacios por parte del servidor para una red de 100 nodos con un tamaño de subespacio de 25. En la primera imagen, se muestran todos los subintervalos definidos pero vacíos. Posteriormente, en la segunda imagen, se ve cómo se asigna el primer peer al primer subintervalo.
 
 En la última imagen, se observa la red bien constituida. Para el correcto funcionamiento de la búsqueda y localización de archivos, los peers se ubican dentro de los intervalos en orden de llegada, de menor a mayor. Es decir, después de la llegada del primer peer, se añadió el segundo nodo, que tomó el ID 26 en el segundo subintervalo. El tercer peer que decidió unirse a la red tomó el ID 51 en el tercer intervalo, y finalmente, el cuarto peer se unió con el ID 76 en el último subintervalo. A partir de ese punto, todos los peers que llegaron se asignaron de manera aleatoria dentro de cada subintervalo, pero respetando el orden de asignación de IDs, que también va de menor a mayor.
@@ -47,17 +55,17 @@ En la última imagen, se observa la red bien constituida. Para el correcto funci
 
 No se utilizó ningún patrón de diseño específico, pero se aplicaron los principios SOLID. El código está bien desacoplado. Además, si se quisiera implementar un patrón de diseño, como el patrón Observer para la función de reenviar los archivos que no son propios de la zona, se podría hacer de manera muy sencilla. También sería posible implementar un Singleton para la creación del servidor; sin embargo, dado que el código está diseñado para que no haya más de un servidor, en ese sentido se cumplió con lo requerido.
 
-### 2.3. Prácticas utilizadas
-
 ## 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerías, paquetes, etc., con sus números de versiones.
 
 ### 3.1. Compilación y ejecución
 
 ### 3.2. Detalles del desarrollo y detalles técnicos
 
-Se utilizó Python como lenguaje de programación. Entre las bibliotecas más relevantes que se emplearon, se encuentran las bibliotecas nativas de Python, como random y os, entre otras necesarias para la implementación de ciertas funcionalidades. Se evitó un alto acoplamiento en el desarrollo. Además, se utilizó Docker como servicio de virtualización y se desplegó el servidor en instancias EC2 de AWS.
+Se utilizó Python (3.12.x) como lenguaje de programación y gRPC(1.66.0) como middleware RPC. Entre las bibliotecas más relevantes que se emplearon, se encuentran las bibliotecas nativas de Python, como request(2.31.0), dotenv(1.0.1), random y os, entre otras necesarias para la implementación de ciertas funcionalidades. Se evitó un alto acoplamiento en el desarrollo. Además, se utilizó Docker(24.0.7) como servicio de virtualización y se desplegó el servidor en instancias EC2(Ubuntu 24.04) de AWS.
 
 ### 3.3. Parámetros
+
+En cuanto a los parámetros del programa, existe un archivo con la extensión .example que debe ser renombrado a .env. Dentro de este archivo se encuentran los parámetros de ejecución del proyecto, que incluyen los atributos del servidor, como los permisos, la IP, el puerto, el número máximo de nodos, y la cantidad de subespacios que se van a crear. Además, están los parámetros de cada peer, que incluyen la IP, el puerto, y la carpeta donde se descargarán los archivos de la red.
 
 ## 4. Referencias:
 - [https://github.com/st0263eafit/st0263-242/blob/main/README-template.md](https://github.com/st0263eafit/st0263-242/blob/main/README-template.md)

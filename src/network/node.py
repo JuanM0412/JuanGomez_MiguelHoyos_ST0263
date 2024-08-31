@@ -6,10 +6,10 @@ from src.proto import peer_pb2, peer_pb2_grpc
 
 
 class NodePeer(peer_pb2_grpc.PeerServiceServicer):
-    def __init__(self, ip: str, port: int, server_ip: str, server_port: str):
+    def __init__(self, ip: str, port: int, server_ip: str, server_port: str, downloads_dir: str):
         self.own_files = {}
         self.external_files = {}
-        self.downloaded_files = []
+        self.downloads_dir = downloads_dir
         self.ip = ip
         self.port = port
         self.id = None
@@ -46,8 +46,8 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
             response = peer_stub.ReceiveExternalFile(peer_pb2.File(name=file, hash_value=file_hash))
 
         return {
-            "success": response.status == "success",
-            "is_owner": owner_file 
+            'success': response.status == 'success',
+            'is_owner': owner_file 
         }
 
 
@@ -73,8 +73,12 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
 
         response = peer_stub.SendFile(peer_pb2.File(name=file, hash_value=file_hash))
         if response.file_name != '0':
-            self.downloaded_files.append(response.file_name)
-            print(f'File {response.file_name} downloaded')
+            if not os.path.exists(self.downloads_dir):
+                os.makedirs(self.downloads_dir, exist_ok=True)
+
+            file_path = os.path.join(self.downloads_dir, response.file_name)
+            open(file_path, 'a').close()
+            print(f'File {response.file_name} downloaded and saved to {self.downloads_dir}')
         else:
             print('File does not exist')
 
@@ -87,14 +91,14 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
             files = self.own_files[hash_value]
             for file in files:
                 if file == file_name:
-                    return peer_pb2.FileResponse(status="success", message="File found", file_name=file_name)
+                    return peer_pb2.FileResponse(status='success', message='File found', file_name=file_name)
         elif hash_value in self.external_files.keys():
             files = self.external_files[hash_value]
             for file in files:
                 if file == file_name:
-                    return peer_pb2.FileResponse(status="success", message="File found", file_name=file_name)
+                    return peer_pb2.FileResponse(status='success', message='File found', file_name=file_name)
         
-        return peer_pb2.FileResponse(status="error", message="File not found", file_name='0')
+        return peer_pb2.FileResponse(status='error', message='File not found', file_name='0')
 
 
     def ReceiveOwnFile(self, request, context):
@@ -106,7 +110,7 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
             self.own_files[hash_value] = files
         else:
             self.own_files[hash_value] = {file}
-        return peer_pb2.FileResponse(status="success", message=f"File {file} received", file_name=file)
+        return peer_pb2.FileResponse(status='success', message=f'File {file} received', file_name=file)
 
 
     def ReceiveExternalFile(self, request, context):
@@ -118,7 +122,7 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
             self.external_files[hash_value] = files
         else:
             self.external_files[hash_value] = {file}
-        return peer_pb2.FileResponse(status="success", message=f"File {file} received", file_name=file)
+        return peer_pb2.FileResponse(status='success', message=f'File {file} received', file_name=file)
 
 
     def request_node_list(self):
@@ -154,7 +158,7 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
                 for hash_value, files in self.external_files.items():
                     for file in files:
                         result = self.upload_file(file)
-                        if result["success"] and result["is_owner"]:
+                        if result['success'] and result['is_owner']:
                             files_to_remove.append((hash_value, file))
                 
                 for hash_value, file in files_to_remove:
@@ -174,7 +178,7 @@ class NodePeer(peer_pb2_grpc.PeerServiceServicer):
 def main_menu(peer: NodePeer):
     try:
         while True:
-            option = int(input('Choose an option: \n1. Disconnect \n2. Upload file \n3. Download file \n4. My attributes \n5. Update node list \n6. Exit\n'))
+            option = int(input('Choose an option: \n1. Disconnect \n2. Upload file \n3. Download file \n4. My attributes \n5. Show node list \n6. Exit\n'))
 
             if option == 1:
                 peer.disconnect()
@@ -190,7 +194,6 @@ def main_menu(peer: NodePeer):
                 print(f'Upper limit: {peer.upper_limit}')
                 print(f'Own file list: {peer.own_files}')
                 print(f'External file list: {peer.external_files}')
-                print(f'Downloaded files: {peer.downloaded_files}')
             elif option == 5:
                 node_list = peer.request_node_list()
                 print(node_list)
@@ -198,8 +201,8 @@ def main_menu(peer: NodePeer):
                 peer.disconnect()
                 break
             else:
-                print("Invalid option. Please try again.")
+                print('Invalid option. Please try again.')
     except KeyboardInterrupt:
-        print("\nCtrl+C pressed. Disconnecting...")
+        print('\nCtrl+C pressed. Disconnecting...')
     finally:
         peer.disconnect()

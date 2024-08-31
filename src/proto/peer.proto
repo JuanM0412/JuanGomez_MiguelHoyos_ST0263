@@ -3,12 +3,13 @@ syntax = "proto3";
 package peer;
 
 service PeerService {
+  // Server
   rpc Register (RegisterRequest) returns (RegisterResponse);
   rpc Unregister (UnregisterRequest) returns (UnregisterResponse);
   rpc GetInternalTable (InternalTableRequest) returns (InternalTableResponse);
   rpc GetInterval (InternalTableRequest) returns (InternalTableResponse);
   
-  // Servicios para manejar archivos
+  // Peer
   rpc ReceiveOwnFile (File) returns (FileResponse);
   rpc ReceiveExternalFile (File) returns (FileResponse);
   rpc SendFile (File) returns (FileResponse);

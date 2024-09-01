@@ -59,15 +59,66 @@ No se utilizó ningún patrón de diseño específico, pero se aplicaron los pri
 
 ### 3.1. Compilación y ejecución
 
+#### 3.1.1. Generar y preparar el código fuente
+1. Clonar el repositorio:
+    ```
+    git clone https://github.com/JuanM0412/JuanGomez_MiguelHoyos_ST0263.git
+    ```
+2. Acceder al directorio que se creó como consecuencia del paso anterior:
+    ```
+    cd JuanGomez_MiguelHoyos_ST0263/
+    ```
+3. Cambiar el archivo `.env.example` a `.env`:
+    ```
+    mv .env.example .env
+    ```
+4. Modificar archivo el archivo `.env` según la necesidad.
+
+#### 3.1.2. Ejecución el local
+1. Crear y activar un ambiente virtual:
+    ```
+    python -m venv venvname
+    source venvname/bin/activate
+    ```
+    **Nota:** Reemplazar `venvname` con un nombre más adecuado, como lo puede ser `p2p_network`.
+2. Instalar las dependencias:
+    ```
+    pip install -r requirements.txt
+    ```
+3. Ejecutar el servidor:
+    ```
+    python run_server.py
+    ```
+4. Ejecutar un peer:
+    ```
+    python peer.py
+    ```
+**Nota:** Para el correcto funcionamiento de estas últimas dos instrucciones se recomienda ir al archivo `.env` y cambiar el puerto y que no se repitan, es decir, que un peer y el servidor no tengan el mismo puerto, o que dos peers tengan el mismo puerto. Esto para evitar conflictos.
+
+#### 3.1.3. Desplegar servidor en la nube usando Docker
+1. Crear la imagen de Docker:
+    ```
+    docker build -t p2p_network .
+    ```
+2. Ejecutar un contenedor de Docker a partir de la imagen creada en el paso anterior:
+    ```
+    docker run -it --name p2p_server -p 50051:50051 p2p_network
+    ```
+    **Nota:** En este caso estamos ejecutando el contenedor de forma interactiva, si se quiere ejecutar en segundo plano se debe reemplazar `-it` por `-d`. Además, se deben reemplazar los puertos (`50051:50051`) según la necesidad.
+3. Conectar peers a este servidor.
+
 ### 3.2. Detalles del desarrollo y detalles técnicos
 
-Se utilizó Python (3.12.x) como lenguaje de programación y gRPC(1.66.0) como middleware RPC. Entre las bibliotecas más relevantes que se emplearon, se encuentran las bibliotecas nativas de Python, como request(2.31.0), dotenv(1.0.1), random y os, entre otras necesarias para la implementación de ciertas funcionalidades. Se evitó un alto acoplamiento en el desarrollo. Además, se utilizó Docker(24.0.7) como servicio de virtualización y se desplegó el servidor en instancias EC2(Ubuntu 24.04) de AWS.
+Se utilizó Python (3.12.x) como lenguaje de programación y gRPC (1.66.0) como middleware RPC. Entre las bibliotecas más relevantes que se emplearon, se encuentran las bibliotecas nativas de Python, como request (2.31.0), dotenv (1.0.1), random y os, entre otras necesarias para la implementación de ciertas funcionalidades. Se evitó un alto acoplamiento en el desarrollo. Además, se utilizó Docker (24.0.7) como servicio de virtualización y se desplegó el servidor en instancias EC2 (Ubuntu 24.04) de AWS.
 
 ### 3.3. Parámetros
 
-En cuanto a los parámetros del programa, existe un archivo con la extensión .example que debe ser renombrado a .env. Dentro de este archivo se encuentran los parámetros de ejecución del proyecto, que incluyen los atributos del servidor, como los permisos, la IP, el puerto, el número máximo de nodos, y la cantidad de subespacios que se van a crear. Además, están los parámetros de cada peer, que incluyen la IP, el puerto, y la carpeta donde se descargarán los archivos de la red.
+En cuanto a los parámetros del programa, existe un archivo llamado .env.example que debe ser renombrado a .env. Dentro de este archivo se encuentran los parámetros de ejecución del proyecto, que incluyen los atributos del servidor, como la dirección IP, el puerto, el número máximo de nodos, y la cantidad de subespacios que se van a crear. Además, están los parámetros de cada peer, que incluyen la dirección IP, el puerto, y la carpeta donde se descargarán los archivos de la red.
 
-## 4. Referencias:
+## 4. Vídeo sustentación
+[Link al vídeo](https://eafit-my.sharepoint.com/:v:/g/personal/jmgomezp_eafit_edu_co/EdRBT5zuhCFAu1VirjoFUd4B3P5vFm53v5r0HSolpHlWrg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=g0xQWf)
+
+## 5. Referencias:
 - [https://github.com/st0263eafit/st0263-242/blob/main/README-template.md](https://github.com/st0263eafit/st0263-242/blob/main/README-template.md)
 - [https://en.wikipedia.org/wiki/Chord_(peer-to-peer)](https://en.wikipedia.org/wiki/Chord_(peer-to-peer))
 - [https://grpc.io/docs/languages/python/basics/](https://grpc.io/docs/languages/python/basics/)
